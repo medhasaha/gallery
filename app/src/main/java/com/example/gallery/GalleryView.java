@@ -1,6 +1,7 @@
 package com.example.gallery;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GalleryView extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -44,11 +46,17 @@ public class GalleryView extends AppCompatActivity {
     int scrollOutItems;
     int noOfCols = 2;
     String query = "";
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_view);
+
+        Intent i = getIntent();
+        query = i.getStringExtra ( "searchQuery" );
+        noOfCols = i.getIntExtra("noOfCols", 2);
+//        Toast.makeText(GalleryView.this, noOfCols + "", Toast.LENGTH_SHORT).show();
 
         arrayList = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -60,18 +68,50 @@ public class GalleryView extends AppCompatActivity {
         adapter = new MyAdapter(GalleryView.this, arrayList);
         recyclerView.setAdapter(adapter);
         recyclerViewScrollListener();
-
-        Intent i = getIntent();
-        query = i.getStringExtra ( "searchQuery" );
-//        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-
-        jsonparse();
+//
+        if(current_page == 1){
+            firstPage();
+        }else {
+            jsonparse();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menu_inflator=getMenuInflater();
         menu_inflator.inflate(R.menu.menu_xml,menu);
+        final MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+        searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String q) {
+                // Toast like print
+                query = q;
+                firstPage();
+//                Toast.makeText(GalleryView.this, "search1" + query, Toast.LENGTH_SHORT).show();
+                if( ! searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                myActionMenuItem.collapseActionView();
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        if(noOfCols == 2){
+            menu.findItem(R.id.col2).setChecked(true);
+        }
+        else if (noOfCols == 3){
+            menu.findItem(R.id.col3).setChecked(true);
+        }
+        else if(noOfCols == 4){
+            menu.findItem(R.id.col4).setChecked(true);
+        }
+        else {
+            menu.findItem(R.id.col2).setChecked(true);
+        }
         return true;
     }
 
@@ -79,28 +119,38 @@ public class GalleryView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId())
         {
-            case R.id.item1:
+            case R.id.action_search:
+//                Toast.makeText(GalleryView.this, "search", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.col2:
                 noOfCols = 2;
 //                layoutManager= new GridLayoutManager(GalleryView.this,2);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
 //                Toast.makeText(GalleryView.this, "item 1 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
                 return true;
 
-            case R.id.item2:
+            case R.id.col3:
                 noOfCols = 3;
 //                layoutManager= new GridLayoutManager(GalleryView.this,3);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
 //                Toast.makeText(GalleryView.this, "item 2 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
                 return true;
 
-            case R.id.item3:
+            case R.id.col4:
                 noOfCols = 4;
 //                layoutManager= new GridLayoutManager(GalleryView.this,4);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
 //                Toast.makeText(GalleryView.this, "item 3 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -109,9 +159,9 @@ public class GalleryView extends AppCompatActivity {
 
 
     private void jsonparse(){
-//        Toast.makeText(this, "a", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "jsonparse", Toast.LENGTH_SHORT).show();
         String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=" + current_page;
-//        Toast.makeText(this, "b" + searchImage, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
         JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -155,6 +205,8 @@ public class GalleryView extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 
+
+
     public void recyclerViewScrollListener() {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -183,13 +235,65 @@ public class GalleryView extends AppCompatActivity {
                         //Toast.makeText(getContext(), "next", Toast.LENGTH_SHORT).show();
                         adapter.notifyDataSetChanged();
                         current_page++;
-                        jsonparse();
+                        if(current_page == 1){
+                            firstPage();
+                        }else {
+                            jsonparse();
+                        }
                     }
                 } else {
 //                    Toast.makeText(GalleryView.this, "Pagination not working", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void firstPage(){
+//        Toast.makeText(this, "First", Toast.LENGTH_SHORT).show();
+        arrayList.clear();
+        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=1";
+//        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
+        JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("hits");
+//                  Toast.makeText(GalleryView.this, ""+jsonArray, Toast.LENGTH_SHORT).show();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject data = jsonArray.getJSONObject(i);
+                        ModelClass hit = new ModelClass();
+                        hit.setWebformatURL( data.getString("webformatURL"));
+                        hit.setViews(data.getInt("views"));
+                        hit.setDownloads(data.getInt("downloads"));
+                        hit.setFavorites(data.getInt("favorites"));
+                        hit.setLikes(data.getInt("likes"));
+                        hit.setComments(data.getInt("comments"));
+                        hit.setUser(data.getString("user"));
+                        hit.setUserImageURL(data.getString("userImageURL"));
+                        Log.i("URL", i + data.getString("userImageURL"));
+                        hit.setTags(data.getString("tags"));
+                        arrayList.add(hit);
+                    }
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.i("URL error a:", e.toString());
+//                    Toast.makeText(GalleryView.this,"Error a:" + e.toString(), Toast.LENGTH_LONG).show();//display the response on screen
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(GalleryView.this,"Error b:" + error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
+                Log.i("URL error b:", error.toString());
+                if (error instanceof NoConnectionError) {
+                    Toast.makeText(GalleryView.this,"Check Your Internet Connection" , Toast.LENGTH_LONG).show();
+                }
+                error.printStackTrace();
+            }
+        }
+        );
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 
 }

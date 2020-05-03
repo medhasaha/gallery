@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MyPopupTheme">
+        <item name="colorAccent">#00f</item>
+        <item name="colorControlNormal">#00f</item>
+    </style>
+
 </resources>
