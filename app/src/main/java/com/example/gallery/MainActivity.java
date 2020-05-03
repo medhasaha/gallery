@@ -42,36 +42,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menu_inflator=getMenuInflater();
-        menu_inflator.inflate(R.menu.menu_main_xml,menu);
-        menu.findItem(R.id.col2).setChecked(true);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId())
-        {
-            case R.id.col2:
-                noOfCols = 2;
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                return true;
-            case R.id.col3:
-                noOfCols = 3;
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                return true;
-            case R.id.col4:
-                noOfCols = 4;
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

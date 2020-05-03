@@ -57,12 +57,12 @@ public class GalleryView extends AppCompatActivity {
 
         Intent i = getIntent();
         query = i.getStringExtra ( "searchQuery" );
-        noOfCols = i.getIntExtra("noOfCols", 2);
+//        noOfCols = i.getIntExtra("noOfCols", 2);
 //        Toast.makeText(GalleryView.this, noOfCols + "", Toast.LENGTH_SHORT).show();
 
         arrayList = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
+//        recyclerView.setHasFixedSize(true);
 //        layoutManager = new LinearLayoutManager(GalleryView.this);
 //        layoutManager= new GridLayoutManager(GalleryView.this,noOfCols);
         layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
@@ -170,7 +170,7 @@ public class GalleryView extends AppCompatActivity {
 
     private void jsonparse(){
 //        Toast.makeText(this, "jsonparse", Toast.LENGTH_SHORT).show();
-        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&per_page=100&page=" + current_page;
+        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&per_page=50&page=" + current_page;
 //        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
         JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
             @Override
@@ -262,7 +262,8 @@ public class GalleryView extends AppCompatActivity {
     private void firstPage(){
 //        Toast.makeText(this, "First", Toast.LENGTH_SHORT).show();
         arrayList.clear();
-        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=1&per_page=100";
+        Log.i("URL", arrayList.size()+ "");
+        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=1&per_page=50";
 //        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
         JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
             @Override
