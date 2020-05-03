@@ -14,13 +14,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MyAdapter_fourCols extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private final ArrayList<ModelClass> list;
     private int noOfCols;
 
 
-    public MyAdapter(Context context, ArrayList<ModelClass> list, int noOfCols) {
+    public MyAdapter_fourCols(Context context, ArrayList<ModelClass> list, int noOfCols) {
         this.context = context;
         this.list = list;
         this.noOfCols = noOfCols;
@@ -30,23 +30,17 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         LayoutInflater inflater1 = LayoutInflater.from((parent.getContext()));
-        View view = inflater1.inflate(R.layout.row_layout, parent, false);
-        return new MyViewHolder(view);
+        View view = inflater1.inflate(R.layout.row_layout_four_cols, parent, false);
+        return new MyViewHolder_fourCols(view);
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        MyViewHolder myHolder = (MyViewHolder) holder;
-        Picasso.with(context).load(list.get(position).getWebformatURL()).into(myHolder.getIvPhoto());
-        if (list.get(position).getUserImageURL().isEmpty() == false) {
-            Picasso.with(context).load(list.get(position).getUserImageURL()).into(myHolder.getIvUserImage());
-        }
-        myHolder.getTvUser().setText(list.get(position).getUser());
-        myHolder.getTvFavorites().setText(list.get(position).getFavorites().toString());
-        myHolder.getTvLikes().setText(list.get(position).getLikes().toString());
-
+        MyViewHolder_fourCols myHolder = (MyViewHolder_fourCols) holder;
+        Picasso.with(context).load(list.get(position).getWebformatURL()).into(myHolder.getIvPhotoOnly());
     }
 
     @Override

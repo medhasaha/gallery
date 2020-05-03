@@ -5,7 +5,6 @@ import java.util.List;
 public class ModelClass {
     private Integer total;
     private Integer totalHits;
-    private List<HitClass> hits = null;
     private Integer id;
     private String pageURL;
     private String type;
@@ -45,13 +44,6 @@ public class ModelClass {
         this.totalHits = totalHits;
     }
 
-    public List<HitClass> getHits() {
-        return hits;
-    }
-
-    public void setHits(List<HitClass> hits) {
-        this.hits = hits;
-    }
 
     public Integer getId() {
         return id;

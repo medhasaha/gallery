@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +38,7 @@ public class GalleryView extends AppCompatActivity {
 //    GridLayoutManager layoutManager;
     StaggeredGridLayoutManager layoutManager;
     MyAdapter adapter;
+    MyAdapter_fourCols adapter_fourCols;
     ArrayList <ModelClass> arrayList;
     int current_page = 1;
     int doPagination = 1;
@@ -65,8 +67,13 @@ public class GalleryView extends AppCompatActivity {
 //        layoutManager= new GridLayoutManager(GalleryView.this,noOfCols);
         layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MyAdapter(GalleryView.this, arrayList);
-        recyclerView.setAdapter(adapter);
+        if(noOfCols == 4) {
+            adapter_fourCols = new MyAdapter_fourCols(GalleryView.this, arrayList, noOfCols);
+            recyclerView.setAdapter(adapter_fourCols);
+        }else{
+            adapter = new MyAdapter(GalleryView.this, arrayList, noOfCols);
+            recyclerView.setAdapter(adapter);
+        }
         recyclerViewScrollListener();
 //
         if(current_page == 1){
@@ -127,8 +134,9 @@ public class GalleryView extends AppCompatActivity {
                 noOfCols = 2;
 //                layoutManager= new GridLayoutManager(GalleryView.this,2);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
-//                Toast.makeText(GalleryView.this, "item 1 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                adapter = new MyAdapter(GalleryView.this, arrayList, noOfCols);
+                recyclerView.setAdapter(adapter);
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
                 return true;
@@ -137,8 +145,9 @@ public class GalleryView extends AppCompatActivity {
                 noOfCols = 3;
 //                layoutManager= new GridLayoutManager(GalleryView.this,3);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
-//                Toast.makeText(GalleryView.this, "item 2 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                adapter = new MyAdapter(GalleryView.this, arrayList, noOfCols);
+                recyclerView.setAdapter(adapter);
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
                 return true;
@@ -147,8 +156,9 @@ public class GalleryView extends AppCompatActivity {
                 noOfCols = 4;
 //                layoutManager= new GridLayoutManager(GalleryView.this,4);
                 layoutManager = new StaggeredGridLayoutManager(noOfCols, LinearLayoutManager.VERTICAL);
-//                Toast.makeText(GalleryView.this, "item 3 has beeen selected", Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(layoutManager);
+                adapter_fourCols = new MyAdapter_fourCols(GalleryView.this, arrayList, noOfCols);
+                recyclerView.setAdapter(adapter_fourCols);
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
                 return true;
@@ -160,7 +170,7 @@ public class GalleryView extends AppCompatActivity {
 
     private void jsonparse(){
 //        Toast.makeText(this, "jsonparse", Toast.LENGTH_SHORT).show();
-        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=" + current_page;
+        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&per_page=100&page=" + current_page;
 //        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
         JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
             @Override
@@ -172,6 +182,7 @@ public class GalleryView extends AppCompatActivity {
                         JSONObject data = jsonArray.getJSONObject(i);
                         ModelClass hit = new ModelClass();
                         hit.setWebformatURL( data.getString("webformatURL"));
+                        hit.setPreviewURL( data.getString("previewURL"));
                         hit.setViews(data.getInt("views"));
                         hit.setDownloads(data.getInt("downloads"));
                         hit.setFavorites(data.getInt("favorites"));
@@ -251,7 +262,7 @@ public class GalleryView extends AppCompatActivity {
     private void firstPage(){
 //        Toast.makeText(this, "First", Toast.LENGTH_SHORT).show();
         arrayList.clear();
-        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=1";
+        String searchImage = Urls.baseUrl+"&q=" + query + "&image_type=photo&page=1&per_page=100";
 //        Toast.makeText(this, "b" + query, Toast.LENGTH_SHORT).show();
         JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, searchImage, null, new Response.Listener<JSONObject>() {
             @Override
@@ -259,10 +270,14 @@ public class GalleryView extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = response.getJSONArray("hits");
 //                  Toast.makeText(GalleryView.this, ""+jsonArray, Toast.LENGTH_SHORT).show();
+                    if (jsonArray.length() == 0){
+                        Toast.makeText(GalleryView.this, "No Results Found for " + query, Toast.LENGTH_SHORT).show();
+                    }
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject data = jsonArray.getJSONObject(i);
                         ModelClass hit = new ModelClass();
                         hit.setWebformatURL( data.getString("webformatURL"));
+                        hit.setPreviewURL( data.getString("previewURL"));
                         hit.setViews(data.getInt("views"));
                         hit.setDownloads(data.getInt("downloads"));
                         hit.setFavorites(data.getInt("favorites"));

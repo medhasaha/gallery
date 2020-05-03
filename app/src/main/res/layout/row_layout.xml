@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#40FFFFFF"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -21,9 +21,8 @@
 
         <ImageView
             android:id="@+id/ivPhoto"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
             android:scaleType="fitXY" />
 
         <LinearLayout
@@ -110,7 +109,7 @@
                 android:id="@+id/tvUser"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:fontFamily="@font/lato_medium"
+                android:fontFamily="@font/lato_semibold"
                 android:layout_gravity="center_vertical"
                 android:textColor="#FFFFFF"
                 android:background="#01FFFFFF"/>
