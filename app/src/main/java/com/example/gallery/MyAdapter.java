@@ -34,7 +34,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        Log.i("URL position", position + "");
+//        Log.i("URL position", position + "");
         MyViewHolder myHolder = (MyViewHolder) holder;
 //        myHolder.getTextView().setText(position + "");
         Picasso.with(context).load(list.get(position).getWebformatURL()).into(myHolder.getIvPhoto());

@@ -16,6 +16,7 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -134,7 +135,7 @@ public class GalleryView extends AppCompatActivity {
                     }
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
-                    Log.i("URL error", e.toString());
+                    Log.i("URL error a:", e.toString());
 //                    Toast.makeText(GalleryView.this,"Error a:" + e.toString(), Toast.LENGTH_LONG).show();//display the response on screen
                     e.printStackTrace();
                 }
@@ -142,7 +143,11 @@ public class GalleryView extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(GalleryView.this,"Error b:" + error.networkResponse.statusCode, Toast.LENGTH_LONG).show();//display the response on screen
+//                Toast.makeText(GalleryView.this,"Error b:" + error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
+                Log.i("URL error b:", error.toString());
+                if (error instanceof NoConnectionError) {
+                    Toast.makeText(GalleryView.this,"Check Your Internet Connection" , Toast.LENGTH_LONG).show();
+                }
                 error.printStackTrace();
             }
         }
