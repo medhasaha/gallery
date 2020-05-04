@@ -194,7 +194,11 @@ public class GalleryView extends AppCompatActivity {
                         hit.setTags(data.getString("tags"));
                         arrayList.add(hit);
                     }
-                    adapter.notifyDataSetChanged();
+                    if(noOfCols == 4){
+                        adapter_fourCols.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
                 } catch (JSONException e) {
                     Log.i("URL error a:", e.toString());
 //                    Toast.makeText(GalleryView.this,"Error a:" + e.toString(), Toast.LENGTH_LONG).show();//display the response on screen
@@ -290,7 +294,11 @@ public class GalleryView extends AppCompatActivity {
                         hit.setTags(data.getString("tags"));
                         arrayList.add(hit);
                     }
-                    adapter.notifyDataSetChanged();
+                    if(noOfCols == 4){
+                        adapter_fourCols.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
                 } catch (JSONException e) {
                     Log.i("URL error a:", e.toString());
 //                    Toast.makeText(GalleryView.this,"Error a:" + e.toString(), Toast.LENGTH_LONG).show();//display the response on screen
